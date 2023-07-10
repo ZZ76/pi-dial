@@ -1,18 +1,20 @@
 import RPi.GPIO as GPIO
 from queue import Queue
 import time
+import argparse
 
 '''
-Rotary Pi
-4 GND
-5 GPIO
------------
+connection
+Rotary |  Pi
+   4   |  GND
+   5   | GPIO
+--------------
 GPIO PUD_UP
 '''
 
 in_port = 16
-out_port = 26
 max_size = 120
+pulse_stop = 30
 q = list()
 signal = list()
 Q_high = list()
@@ -21,8 +23,16 @@ numbers = list()
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(in_port, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(out_port, GPIO.OUT)
-GPIO.output(out_port, GPIO.HIGH)
+
+def signal_to_pulse():
+    global signal
+    pulses = []
+    for s in signal:
+        if s == 0:
+            pulses.append('_')
+        else:
+            pulses.append('-')
+    return ''.join(pulses)
 
 def process_sig(signal):
     global Q_high, Q_low
@@ -48,10 +58,11 @@ def process_sig(signal):
     if len(Q_high) > 0:
         #print(f'\r{len(Q)}')
         #print(f'\nHigh:{Q_high}\nLow:{Q_low}', end='')
-        #print(f'\nNumber: {10 - len(Q_high)}')
         numbers.append(str(10 - len(Q_high)))
         num = ''.join(numbers)
-        print(f'\r{num}', end='')
+        print(f'\r{" "*max_size}', end='')
+        print(f'\r{signal_to_pulse()}\nNumber: {10 - len(Q_high)}\n{num}')
+        #print(f'\r{num}', end='')
     Q_high = list()
     Q_low = list()
 
@@ -74,12 +85,13 @@ def append(q, p):
         q_tmp = q
     q_tmp.append(p)
     append_sig(1 if p=='-' else 0)
-    if len(q) >= max_size:
-        if q_tmp[-30:] == ['_'] * 30:
+    if len(q) >= max_size and pulse_stop:
+        if q_tmp[-pulse_stop:] == ['_'] * pulse_stop:
             return q
     return q_tmp
 
-if __name__ == '__main__':
+def main():
+    global q
     try:
         while True:
             if GPIO.input(in_port):
@@ -87,8 +99,19 @@ if __name__ == '__main__':
             else:
                 q = append(q, '_')
             output = ''.join(q)
-            #print(f'\r{output}', end='')
+            print(f'\r{output}', end='')
             time.sleep(0.01)
-    except Exception:
+    except BaseException as e:
         print('\r')
+        print(e)
         GPIO.cleanup()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', '--freeze', action='store_true')
+    args = parser.parse_args()
+    if args.freeze:
+        pulse_stop = 30
+    else:
+        pulse_stop = 0
+    main()
