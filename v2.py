@@ -10,20 +10,20 @@ Rotary |  Pi
    5   |  16
    3   |  20
 --------------
-ALL GPIO PUD_UP
+GPIOs PUD_UP
 
 interval 0.01s
-high levels number 6 to 8
-low levels number  2 to 3
+high levels count 6 to 8
+low levels count  2 to 3
 
 example of signal:
-              |   while dialing, p5 will change until the rotary back to its home position   |
+              |   while dialing, p5 will toggle until the dial back to its home position   |
 
 p5: __________--------------------------------------------------------------------------------_______________
 p3: _________________________________________--------___-------___--------___-------___-------_______________
 
                          |      when released, the rotary dial will start rotating back      |
-                         |            and sending pulses to p3 at the same time              |
+                         |            and sending pulses to p3 on its way back               |
                                              |      this piece in p3 is the signal to be     |
                                              |       processed and read the number from      |
 '''
@@ -31,7 +31,7 @@ p3: _________________________________________--------___-------___--------___---
 p5 = 16
 p3 = 20
 max_size = 120 # max length for displaying
-pulse_freeze = 30 # stop displaying new inputs after receive continuous n singals
+pulse_freeze = 20 # stop displaying new inputs after receive continuous n singals
 q = list() # queue for displaying all input signals
 signal = list() # input signals for analysing
 Q_high = list() # high level in $signal, [6, 7, 8] means 6, 7, 8 continuous high levels in $signal
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--freeze', action='store_true')
     args = parser.parse_args()
     if args.freeze:
-        pulse_freeze = 30
+        pass
     else:
         pulse_freeze = 0
     main()

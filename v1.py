@@ -6,8 +6,8 @@ import argparse
 '''
 connection
 Rotary |  Pi
-   4   | GPIO
-   5   |  GND
+   4   |  GND
+   5   |  GPIO
 --------------
 GPIO PUD_UP
 '''
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--freeze', action='store_true')
     args = parser.parse_args()
     if args.freeze:
-        pulse_freeze = 30
+        pass
     else:
         pulse_freeze = 0
     main()
