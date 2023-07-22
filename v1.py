@@ -5,7 +5,7 @@ import argparse
 
 '''
 connection
-Rotary |  Pi
+  Dial |  Pi
    4   |  GND
    5   |  GPIO
 --------------
