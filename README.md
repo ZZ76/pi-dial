@@ -31,9 +31,10 @@ reverse arranged dial in NZ
 ### Usage:
 use argument `-f` to freeze the signal
 |file||
-|---|---|
+|:---:|---|
 | v1.py | only 2 wires connect to port 4 and 5, can just read the number but not robust |
-| v2.py | 3 wires version |
+| v2.py | 3 wires version, the proper way of connection |
+| read_gpio.py | visualise gpio input, read from GND by default for debugging. use `-p` `port_number` to select port, use `-l` set port to PUD_DOWN which is PUD_UP by default |
 
 ### Signals for all the number:
 reading interval is set to 0.01s
